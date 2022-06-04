@@ -16,13 +16,11 @@ function App() {
   const remainingTime = useSelector((state) => state.auth.expirationTime);
 
   if (isLoggedIn) {
-    console.log(`Iam Logged in. Start Timer`);
-    console.log(remainingTime);
     const sec = Math.floor((remainingTime / 1000) % 60).toFixed(0);
     const mins = Math.floor(remainingTime / 1000 / 60).toFixed(0);
     const hours = Math.floor(remainingTime / 1000 / 60 / 60).toFixed(0);
 
-    console.log(`${hours}:${mins}:${sec}`);
+    console.log(`Auto Logout in: ${hours}:${mins}:${sec}`);
     logoutTimer = setTimeout(() => {
       dispatch(authActions.logout());
     }, remainingTime);
