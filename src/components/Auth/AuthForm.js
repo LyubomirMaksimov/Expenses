@@ -1,21 +1,22 @@
-import { useState, useRef, useContext } from "react";
+import { useState, useRef } from "react";
 import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import classes from "./AuthForm.module.css";
-import AuthContext from "../../store/auth-context";
+import { authActions } from "../../store/authSlice";
 
 const AuthForm = () => {
+  const dispatch = useDispatch();
+
   const history = useHistory();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
 
-  const authCtx = useContext(AuthContext);
-
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLoginMode, setIsLoginMode] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const switchAuthModeHandler = () => {
-    setIsLogin((prevState) => !prevState);
+  const switchLoginSignUpModeHandler = () => {
+    setIsLoginMode((prevState) => !prevState);
   };
 
   const SubmitHandler = (event) => {
@@ -27,7 +28,7 @@ const AuthForm = () => {
     setIsLoading(true);
 
     let url;
-    if (isLogin) {
+    if (isLoginMode) {
       url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCo8II4R68Aemw8eQWqqUq8sLo9JapsHQU`;
     } else {
       url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCo8II4R68Aemw8eQWqqUq8sLo9JapsHQU`;
@@ -64,7 +65,14 @@ const AuthForm = () => {
         const expirationTime = new Date(
           new Date().getTime() + +data.expiresIn * 1000
         );
-        authCtx.login(data.idToken, expirationTime.toISOString());
+
+        dispatch(
+          authActions.login({
+            token: data.idToken,
+            expirationTime: expirationTime.toISOString(),
+          })
+        );
+
         history.replace("/");
         // console.log(data);
       })
@@ -75,7 +83,7 @@ const AuthForm = () => {
 
   return (
     <section className={classes.auth}>
-      <h1>{isLogin ? "Login" : "Sign Up"}</h1>
+      <h1>{isLoginMode ? "Login" : "Sign Up"}</h1>
       <form onSubmit={SubmitHandler}>
         <div className={classes.control}>
           <label htmlFor="email">Your Email</label>
@@ -92,15 +100,15 @@ const AuthForm = () => {
         </div>
         <div className={classes.actions}>
           {!isLoading && (
-            <button>{isLogin ? "Login" : "Create Account"}</button>
+            <button>{isLoginMode ? "Login" : "Create Account"}</button>
           )}
           {isLoading && <p>Loading</p>}
           <button
             type="button"
             className={classes.toggle}
-            onClick={switchAuthModeHandler}
+            onClick={switchLoginSignUpModeHandler}
           >
-            {isLogin ? "Create new account" : "Login with existing account"}
+            {isLoginMode ? "Create new account" : "Login with existing account"}
           </button>
         </div>
       </form>

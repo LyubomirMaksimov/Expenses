@@ -1,13 +1,13 @@
-import { useRef, useContext } from "react";
+import { useRef } from "react";
 import { useHistory } from "react-router-dom";
-import AuthContext from "../../store/auth-context";
+import { useSelector } from "react-redux";
 
 import classes from "./ProfileForm.module.css";
 
 const ProfileForm = () => {
+  const token = useSelector((state) => state.auth.token);
   const history = useHistory();
   const newPasswordInputRef = useRef();
-  const authCtx = useContext(AuthContext);
 
   const SubmitHandler = (event) => {
     event.preventDefault();
@@ -18,7 +18,7 @@ const ProfileForm = () => {
     fetch(url, {
       method: "POST",
       body: JSON.stringify({
-        idToken: authCtx.token,
+        idToken: token,
         password: enteredNewPassword,
         returnSecureToken: false,
       }),

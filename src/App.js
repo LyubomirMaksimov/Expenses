@@ -1,15 +1,37 @@
-import { useContext } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import Layout from "./components/Layout/Layout";
 import UserProfile from "./components/Profile/UserProfile";
 import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
-import AuthContext from "./store/auth-context";
+import { authActions } from "./store/authSlice";
+
+let logoutTimer;
 
 function App() {
-  const authCtx = useContext(AuthContext);
-  const isLoggedIn = authCtx.isLoggedIn;
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const remainingTime = useSelector((state) => state.auth.expirationTime);
+
+  if (isLoggedIn) {
+    console.log(`Iam Logged in. Start Timer`);
+    console.log(remainingTime);
+    const sec = Math.floor((remainingTime / 1000) % 60).toFixed(0);
+    const mins = Math.floor(remainingTime / 1000 / 60).toFixed(0);
+    const hours = Math.floor(remainingTime / 1000 / 60 / 60).toFixed(0);
+
+    console.log(`${hours}:${mins}:${sec}`);
+    logoutTimer = setTimeout(() => {
+      dispatch(authActions.logout());
+    }, remainingTime);
+  } else {
+    if (logoutTimer) {
+      console.log(`I logged Out. Timer is removed`);
+      clearTimeout(logoutTimer);
+    }
+  }
 
   return (
     <Layout>
