@@ -6,6 +6,7 @@ import Layout from "./components/Layout/Layout";
 import UserProfile from "./components/Profile/UserProfile";
 import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
+import Expenses from "./pages/ExpensesPage";
 import { authActions } from "./store/authSlice";
 
 let logoutTimer;
@@ -44,6 +45,10 @@ function App() {
         )}
         <Route path="/profile">
           {isLoggedIn && <UserProfile />}
+          {!isLoggedIn && <Redirect to="/auth" />}
+        </Route>
+        <Route path="/Expenses">
+          {isLoggedIn && <Expenses />}
           {!isLoggedIn && <Redirect to="/auth" />}
         </Route>
         <Route path="*">
