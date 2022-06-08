@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import useHttp from "../../hooks/use-http";
+import useHttp, { SignInUrl, SignUpUrl } from "../../hooks/use-http";
 
 import classes from "./AuthForm.module.css";
 
@@ -19,15 +19,8 @@ const AuthForm = () => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
 
-    let url;
-    if (isLoginMode) {
-      url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCo8II4R68Aemw8eQWqqUq8sLo9JapsHQU`;
-    } else {
-      url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCo8II4R68Aemw8eQWqqUq8sLo9JapsHQU`;
-    }
-
     SignInorSignUp({
-      url: url,
+      url: isLoginMode ? SignInUrl : SignUpUrl,
       method: "POST",
       headers: {
         "Content-Type": "application/json",
