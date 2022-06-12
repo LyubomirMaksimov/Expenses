@@ -20,15 +20,8 @@ const retrieveStoredToken = () => {
   if (remainingTime <= 3600) {
     localStorage.removeItem("token");
     localStorage.removeItem("expTime");
-    // console.log(authState);
     return authState;
   }
-
-  // console.log({
-  //   token: storedToken,
-  //   isLoggedIn: true,
-  //   expirationTime: remainingTime,
-  // });
   return {
     token: storedToken,
     isLoggedIn: true,

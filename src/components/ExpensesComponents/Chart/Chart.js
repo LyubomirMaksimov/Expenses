@@ -9,7 +9,6 @@ const Chart = (props) => {
 
   const totalMaximum = dataPointsValues.reduce((acc, e) => (acc += e), 0);
 
-  console.log(totalMaximum);
   return (
     <div className="chart">
       {props.dataPoints.map((datapoint) => {

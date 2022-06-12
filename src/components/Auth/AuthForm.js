@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import useHttp, { SignInUrl, SignUpUrl } from "../../hooks/use-http";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -7,7 +7,7 @@ import { authActions } from "../../store/authSlice";
 import classes from "./AuthForm.module.css";
 
 const AuthForm = () => {
-  const { isLoading, sendRequest: SignInorSignUp, data } = useHttp();
+  const { isLoading, sendRequest: SignInorSignUp } = useHttp();
   const dispatch = useDispatch();
   const history = useHistory();
   const emailInputRef = useRef();
@@ -23,26 +23,7 @@ const AuthForm = () => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
 
-    SignInorSignUp({
-      url: isLoginMode ? SignInUrl : SignUpUrl,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: {
-        email: enteredEmail,
-        password: enteredPassword,
-        returnSecureToken: true,
-      },
-    });
-  };
-
-  useEffect(() => {
-    if (data !== null) {
-      console.log(
-        "------------------------------------------------------------" + data
-      );
-
+    const DispatchDataHandler = (data) => {
       const expirationTime = new Date(
         new Date().getTime() + +data.expiresIn * 1000
       );
@@ -55,8 +36,24 @@ const AuthForm = () => {
       );
 
       history.replace("/");
-    }
-  }, [data, dispatch, history]);
+    };
+
+    SignInorSignUp(
+      {
+        url: isLoginMode ? SignInUrl : SignUpUrl,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: {
+          email: enteredEmail,
+          password: enteredPassword,
+          returnSecureToken: true,
+        },
+      },
+      DispatchDataHandler
+    );
+  };
 
   return (
     <section className={classes.auth}>

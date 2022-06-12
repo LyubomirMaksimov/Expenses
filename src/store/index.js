@@ -1,11 +1,12 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
-import { authApi } from "../services/authAPI";
+import expenseReducer from "./expensesSlice";
+// import { authApi } from "../services/authAPI";
 
 const combinedReducer = combineReducers({
-  //   counter: counterReducer,
+  exp: expenseReducer,
   auth: authReducer,
-  [authApi.reducerPath]: authApi.reducer,
+  // [authApi.reducerPath]: authApi.reducer,
 });
 
 const store = configureStore({

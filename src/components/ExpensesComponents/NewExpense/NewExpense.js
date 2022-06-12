@@ -1,10 +1,16 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { expActions } from "../../../store/expensesSlice";
+import useHttp, { GetExpensesURL } from "../../../hooks/use-http";
+
 import "./NewExpense.css";
 
 import ExpenseForm from "./ExpenseForm";
 
 const NewExpense = (props) => {
+  const dispatch = useDispatch();
   const [openForm, setOpenForm] = useState(false);
+  const { sendRequest: SaveExpenseRequest } = useHttp();
 
   const onSaveExpenseDataHandler = (enteredExpenseData) => {
     const expenseData = {
@@ -12,7 +18,19 @@ const NewExpense = (props) => {
       id: Math.random().toString(),
     };
 
-    props.addExpense(expenseData);
+    SaveExpenseRequest(
+      {
+        url: GetExpensesURL,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: expenseData,
+      },
+      () => {}
+    );
+
+    dispatch(expActions.createExpense(expenseData));
     setOpenForm(false);
   };
 

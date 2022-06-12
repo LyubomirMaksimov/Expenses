@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { expActions } from "../../../store/expensesSlice";
+import useHttp, { GetExpensesURL } from "../../../hooks/use-http";
 
 import "./Expenses.css";
 import Card from "../UI/Card";
@@ -7,10 +11,33 @@ import ExpenseFilter from "../NewExpense/ExpenseFilter";
 import ExpensesList from "./ExpensesList";
 import ExpensesChart from "./ExpensesChart";
 
-const Expenses = (props) => {
-  let expenses = props.expenses;
-
+const Expenses = () => {
+  const dispatch = useDispatch();
+  const expenses = useSelector((state) => state.exp);
   const [year, setYear] = useState("2022");
+  const { sendRequest: fetchGetExpenses } = useHttp();
+
+  useEffect(() => {
+    const transformTasks = (mealsObj) => {
+      const loadedMeals = [];
+      for (const mealKey in mealsObj) {
+        loadedMeals.push({
+          id: mealsObj[mealKey].id,
+          title: mealsObj[mealKey].title,
+          amount: mealsObj[mealKey].amount,
+          date: mealsObj[mealKey].date,
+        });
+      }
+      dispatch(expActions.setExpenses(loadedMeals));
+    };
+
+    fetchGetExpenses(
+      {
+        url: GetExpensesURL,
+      },
+      transformTasks
+    );
+  }, [fetchGetExpenses, dispatch, expenses]);
 
   const yearChangeHandler = (year) => {
     setYear(year);
@@ -19,7 +46,6 @@ const Expenses = (props) => {
   const filteredExpenses = expenses.filter(
     (exp) => exp.date.getFullYear().toString() === year
   );
-
   return (
     <Card className="expenses">
       <ExpenseFilter
