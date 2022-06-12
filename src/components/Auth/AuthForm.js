@@ -1,11 +1,15 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import useHttp, { SignInUrl, SignUpUrl } from "../../hooks/use-http";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
+import { authActions } from "../../store/authSlice";
 
 import classes from "./AuthForm.module.css";
 
 const AuthForm = () => {
-  const { isLoading, sendRequest: SignInorSignUp } = useHttp();
-
+  const { isLoading, sendRequest: SignInorSignUp, data } = useHttp();
+  const dispatch = useDispatch();
+  const history = useHistory();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -32,6 +36,27 @@ const AuthForm = () => {
       },
     });
   };
+
+  useEffect(() => {
+    if (data !== null) {
+      console.log(
+        "------------------------------------------------------------" + data
+      );
+
+      const expirationTime = new Date(
+        new Date().getTime() + +data.expiresIn * 1000
+      );
+
+      dispatch(
+        authActions.login({
+          token: data.idToken,
+          expirationTime: expirationTime.toISOString(),
+        })
+      );
+
+      history.replace("/");
+    }
+  }, [data, dispatch, history]);
 
   return (
     <section className={classes.auth}>
