@@ -13,10 +13,11 @@ import ExpensesChart from "./ExpensesChart";
 
 const Expenses = () => {
   const dispatch = useDispatch();
-  const expenses = useSelector((state) => state.exp);
+  const expenses = useSelector((state) => state.exp.expenses);
   const [year, setYear] = useState("2022");
   const { sendRequest: fetchGetExpenses } = useHttp();
 
+  console.log(expenses);
   useEffect(() => {
     const transformTasks = (mealsObj) => {
       const loadedMeals = [];
@@ -28,6 +29,8 @@ const Expenses = () => {
           date: mealsObj[mealKey].date,
         });
       }
+      console.log(loadedMeals);
+
       dispatch(expActions.setExpenses(loadedMeals));
     };
 
@@ -37,15 +40,20 @@ const Expenses = () => {
       },
       transformTasks
     );
-  }, [fetchGetExpenses, dispatch, expenses]);
+  }, [fetchGetExpenses, dispatch]);
 
   const yearChangeHandler = (year) => {
     setYear(year);
   };
 
-  const filteredExpenses = expenses.filter(
-    (exp) => exp.date.getFullYear().toString() === year
-  );
+  const filteredExpenses = expenses;
+
+  console.log(filteredExpenses);
+  // const filteredExpenses = expenses.filter((exp) => {
+  //   console.log(exp.date);
+  //   return true; // exp.date.getFullYear().toString() === year
+  // });
+
   return (
     <Card className="expenses">
       <ExpenseFilter

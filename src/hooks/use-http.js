@@ -7,12 +7,10 @@ export const GetExpensesURL = `https://react-authentication-91413-default-rtdb.f
 const useHttp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  // const [data, setData] = useState(null);
 
   const sendRequest = useCallback(async (requestConfig, applyData) => {
     setIsLoading(true);
     setError(null);
-
     try {
       const response = await fetch(requestConfig.url, {
         method: requestConfig.method ? requestConfig.method : "GET",
